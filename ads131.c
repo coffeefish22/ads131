@@ -4,7 +4,8 @@
 #include "stm32f10x_spi.h"
 #include "string.h"
 #include "globalval.h"
-
+//åŸºäºstm32  rt-thread 2.0 ç³»ç»Ÿçš„ads131 å››è·¯ç”µå‹æµ‹é‡é©±åŠ¨
+//å‚è€ƒç”µå‹1.2v
 void  ads_write_command(u16 command);
 
 int pd_v;
@@ -12,9 +13,9 @@ int V_1248[4]={0};
 int ret00=0;
 long yun_suan_v[4]={0};
 int yuan_1247v[4][10]={0};
-extern volatile int	hard_ver;	//0:Ê¹ÓÃ1248°æ±¾	1£º½öÊ¹ÓÃADS131B04	2£ºÊ¹ÓÃADS131B04ºÍDAC8568
+extern volatile int	hard_ver;	//0:ä½¿ç”¨1248ç‰ˆæœ¬	1ï¼šä»…ä½¿ç”¨ADS131B04	2ï¼šä½¿ç”¨ADS131B04å’ŒDAC8568
 
-#define	S_SPI_DELAY 100//15//10//¶ÔÓÚ72MÊ±ÖÓ£¬Ê±ÖÓ·ÖÆµÖµÉèÖÃÎª1098£¨¶ÔÓÚ36MÊ¹ÓÃ549£©
+#define	S_SPI_DELAY 100//15//10//å¯¹äº72Mæ—¶é’Ÿï¼Œæ—¶é’Ÿåˆ†é¢‘å€¼è®¾ç½®ä¸º1098ï¼ˆå¯¹äº36Mä½¿ç”¨549ï¼‰
 
 int ADS131_CS1_HIGH()
 {
@@ -73,7 +74,7 @@ u8 SPI_ADS131_SendByte(unsigned char in)
 		
 		while (bi--)
 		{
-			S_SPI_CLKH;//Ê±ÖÓÉÏÉıÑØ£¬´«¸ĞÆ÷¶ÁÈ¡Êı¾İ
+			S_SPI_CLKH;//æ—¶é’Ÿä¸Šå‡æ²¿ï¼Œä¼ æ„Ÿå™¨è¯»å–æ•°æ®
 			dli = S_SPI_DELAY;
 			
 			while (dli--);
@@ -88,7 +89,7 @@ u8 SPI_ADS131_SendByte(unsigned char in)
 			in <<= 1;
 			dli = S_SPI_DELAY;
 			while (dli--);
-			S_SPI_CLKL;//Ê±ÖÓÏÂ½µÑØ£¬MCU¸Ä±äÊı¾İ
+			S_SPI_CLKL;//æ—¶é’Ÿä¸‹é™æ²¿ï¼ŒMCUæ”¹å˜æ•°æ®
 //			dli = S_SPI_DELAY;
 //			while (dli--);
 		}
@@ -107,13 +108,13 @@ u8 SPI_ADS131_ReadByte()
    {
 	   for (bi = 0; bi < 8; bi++)
 	   {
-		   S_SPI_CLKH;//Ê±ÖÓÉÏÉıÑØ£¬´«¸ĞÆ÷¸Ä±äÊı¾İ
+		   S_SPI_CLKH;//æ—¶é’Ÿä¸Šå‡æ²¿ï¼Œä¼ æ„Ÿå™¨æ”¹å˜æ•°æ®
 		   
 		   out <<= 1;
 		   dli = S_SPI_DELAY;
 		   while (dli--);
 		   
-		   S_SPI_CLKL;//Ê±ÖÓÏÂ½µÑØ£¬MCU¶ÁÈ¡Êı¾İ
+		   S_SPI_CLKL;//æ—¶é’Ÿä¸‹é™æ²¿ï¼ŒMCUè¯»å–æ•°æ®
 	   
 		   dli = S_SPI_DELAY;
 		   while (dli--);
@@ -145,7 +146,7 @@ void DRDY131_Interrupt(void)
 	exti_pin.EXTI_Mode = EXTI_Mode_Interrupt;
 	exti_pin.EXTI_Trigger = EXTI_Trigger_Falling;
 	exti_pin.EXTI_LineCmd = ENABLE;
-	EXTI_Init(&exti_pin);				//³õÊ¼»¯Íâ²¿ÖĞ¶Ï0
+	EXTI_Init(&exti_pin);				//åˆå§‹åŒ–å¤–éƒ¨ä¸­æ–­0
 
 
 	NVIC_Struct.NVIC_IRQChannel = EXTI0_IRQn;
@@ -158,9 +159,9 @@ void DRDY131_Interrupt(void)
 u32 data11=0;
 u16 ads_read_reg2(u16 address);
 
-//¶¼ÊÇ¸ß×Ö½ÚÔÚÇ°
-//Ğ´Èë¼Ä´æÆ÷Ò²ÊÇ¸ß×Ö½ÚÔÚÇ°  µÍ×Ö½ÚÔÚºó
-//¶Á³öÀ´Êı¾İÒ²ÊÇ¸ß×Ö½ÚÔÚÇ°  µÍ×Ö½ÚÔÚºó
+//éƒ½æ˜¯é«˜å­—èŠ‚åœ¨å‰
+//å†™å…¥å¯„å­˜å™¨ä¹Ÿæ˜¯é«˜å­—èŠ‚åœ¨å‰  ä½å­—èŠ‚åœ¨å
+//è¯»å‡ºæ¥æ•°æ®ä¹Ÿæ˜¯é«˜å­—èŠ‚åœ¨å‰  ä½å­—èŠ‚åœ¨å
 void ads_write_reg(u16 address ,u16 data)
 {
 	int test=0;
@@ -262,7 +263,7 @@ u16 ads_read_data()
 			cur_channel=0;
 	}
 //	set_channel_enable(cur_channel+1); 
-//ÏÈÖ±½Ó²âÊÔÍ¨µÀ6
+//å…ˆç›´æ¥æµ‹è¯•é€šé“6
 	set_channel_enable(6);
 
 	ads_write_command(0);
@@ -445,21 +446,21 @@ void ads131_reset()
 
 }
 
-	/******************ads131¹Ü½ÅÓëMCU¶ÔÓ¦¹ØÏµ*******************
+	/******************ads131ç®¡è„šä¸MCUå¯¹åº”å…³ç³»*******************
 	SCK----------Pb13
 	MISO---------Pb14
 	MOSI---------Pb15							(SPI)
 	CS-----------Pb12
 	RESET--------PD5
 	DRDY---------PD6
-	******************ads1247¹Ü½ÅÓëMCU¶ÔÓ¦¹ØÏµ*******************/
+	******************ads1247ç®¡è„šä¸MCUå¯¹åº”å…³ç³»*******************/
 void ADS131_SPI_Configuration()
 {
  
 //  	SPI_InitTypeDef SPI_InitStruct;  
   	GPIO_InitTypeDef GPIO_InitStructure;
 	 
-  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOD,ENABLE); 	 //SPIµÄSCK¡¢MISO¡¢MOSI¶¼ÊÇPB
+  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOD,ENABLE); 	 //SPIçš„SCKã€MISOã€MOSIéƒ½æ˜¯PB
 //	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE); 
    
    //CLK
